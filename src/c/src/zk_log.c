@@ -23,6 +23,8 @@
 #include "zookeeper_log.h"
 #ifndef WIN32
 #include <unistd.h>
+#else
+#include "winport.h"
 #endif
 
 #include <stdarg.h>
@@ -34,8 +36,6 @@
 #ifdef THREADED
 #ifndef WIN32
 #include <pthread.h>
-#else 
-#include "winport.h"
 #endif
 
 static pthread_key_t time_now_buffer;
