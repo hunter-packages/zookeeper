@@ -1,6 +1,6 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 
-PROJECT(zookeeper)
+PROJECT(zookeeper VERSION 3.4.9)
 
 set(COMMON_SRCS
     src/recordio.c
@@ -92,8 +92,22 @@ target_compile_definitions(cli_mt PRIVATE THREADED ${ZK_CLI_DEFINES})
 set(config_install_dir "lib/cmake/${PROJECT_NAME}")
 set(include_install_dir "include")
 
+set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated/cmake")
+
+set(version_config "${generated_dir}/${PROJECT_NAME}ConfigVersion.cmake")
+set(project_config "${generated_dir}/${PROJECT_NAME}Config.cmake")
 set(targets_export_name "${PROJECT_NAME}Targets")
 set(namespace "${PROJECT_NAME}::")
+
+include(CMakePackageConfigHelpers)
+
+# Note: PROJECT_VERSION is used as a VERSION
+write_basic_package_version_file(
+    "${version_config}" COMPATIBILITY SameMajorVersion
+)
+
+# Note: variable 'targets_export_name' used
+configure_file("cmake/Config.cmake.in" "${project_config}" @ONLY)
 
 
 install(
@@ -109,6 +123,13 @@ install(
     FILES include/zookeeper.h
     DESTINATION "${include_install_dir}"
 )
+
+
+install(
+    FILES "${project_config}" "${version_config}"
+    DESTINATION "${config_install_dir}"
+)
+
 
 install(
     EXPORT "${targets_export_name}"
