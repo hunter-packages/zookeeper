@@ -85,3 +85,33 @@ add_executable(cli_mt
 )
 target_link_libraries(cli_mt zookeeper_mt)
 target_compile_definitions(cli_mt PRIVATE THREADED ${ZK_CLI_DEFINES})
+
+
+
+
+set(config_install_dir "lib/cmake/${PROJECT_NAME}")
+set(include_install_dir "include")
+
+set(targets_export_name "${PROJECT_NAME}Targets")
+set(namespace "${PROJECT_NAME}::")
+
+
+install(
+    TARGETS zookeeper_mt zookeeper_st
+    EXPORT "${targets_export_name}"
+    LIBRARY DESTINATION "lib"
+    ARCHIVE DESTINATION "lib"
+    RUNTIME DESTINATION "bin"
+    INCLUDES DESTINATION "${include_install_dir}"
+)
+
+install(
+    FILES include/zookeeper.h
+    DESTINATION "${include_install_dir}"
+)
+
+install(
+    EXPORT "${targets_export_name}"
+    NAMESPACE "${namespace}"
+    DESTINATION "${config_install_dir}"
+)
