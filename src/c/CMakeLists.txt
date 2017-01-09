@@ -119,8 +119,9 @@ install(
     INCLUDES DESTINATION "${include_install_dir}"
 )
 
+file(GLOB include_files "include/*.h")
 install(
-    FILES include/zookeeper.h
+    FILES ${include_files} generated/zookeeper.jute.h
     DESTINATION "${include_install_dir}"
 )
 
