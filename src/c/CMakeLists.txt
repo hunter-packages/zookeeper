@@ -48,11 +48,11 @@ set(BUILD_DYNAMIC OFF CACHE BOOL "build dynamic libs instead of static ones")
 if(BUILD_DYNAMIC)
     set(ZK_BUILD_TYPE SHARED)
     set(ZK_DEFINES DLL_EXPORT)
-    set(ZK_CLI_DEFINES "")
+    set(ZK_INTERFACE_DEFINES "")
 else()
     set(ZK_BUILD_TYPE STATIC)
     set(ZK_DEFINES USE_STATIC_LIB)
-    set(ZK_CLI_DEFINES USE_STATIC_LIB)
+    set(ZK_INTERFACE_DEFINES USE_STATIC_LIB)
 endif()
 
 include_directories(include/ generated/ ./)
@@ -63,13 +63,16 @@ add_library(zookeeper_st ${ZK_BUILD_TYPE}
     src/st_adaptor.c
 )
 target_link_libraries(zookeeper_st ${ZK_LINK_LIBS})
-target_compile_definitions(zookeeper_st PRIVATE ${ZK_DEFINES})
+target_compile_definitions(
+    zookeeper_st 
+    PRIVATE ${ZK_DEFINES}
+    INTERFACE ${ZK_INTERFACE_DEFINES}
+)
 
 add_executable(cli_st
     src/cli.c
 )
 target_link_libraries(cli_st zookeeper_st)
-target_compile_definitions(cli_st PRIVATE ${ZK_CLI_DEFINES})
 
 ######### MT ###########   
 add_library(zookeeper_mt ${ZK_BUILD_TYPE}
@@ -78,13 +81,16 @@ add_library(zookeeper_mt ${ZK_BUILD_TYPE}
 )
 find_package(Threads)
 target_link_libraries(zookeeper_mt ${ZK_LINK_LIBS} ${CMAKE_THREAD_LIBS_INIT})
-target_compile_definitions(zookeeper_mt PRIVATE THREADED ${ZK_DEFINES})
+target_compile_definitions(
+    zookeeper_mt 
+    PRIVATE ${ZK_DEFINES} THREADED
+    INTERFACE ${ZK_INTERFACE_DEFINES} THREADED
+)
 
 add_executable(cli_mt
     src/cli.c
 )
 target_link_libraries(cli_mt zookeeper_mt)
-target_compile_definitions(cli_mt PRIVATE THREADED ${ZK_CLI_DEFINES})
 
 
 
