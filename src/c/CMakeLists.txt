@@ -43,6 +43,7 @@ endif()
 
 
 set(BUILD_DYNAMIC OFF CACHE BOOL "build dynamic libs instead of static ones")
+set(BUILD_CLIS OFF CACHE BOOL "build example command line programs")
 
 
 if(BUILD_DYNAMIC)
@@ -69,10 +70,12 @@ target_compile_definitions(
     INTERFACE ${ZK_INTERFACE_DEFINES}
 )
 
-add_executable(cli_st
-    src/cli.c
-)
-target_link_libraries(cli_st zookeeper_st)
+if(BUILD_CLIS)
+    add_executable(cli_st
+        src/cli.c
+    )
+    target_link_libraries(cli_st zookeeper_st)
+endif()
 
 ######### MT ###########   
 add_library(zookeeper_mt ${ZK_BUILD_TYPE}
@@ -87,11 +90,12 @@ target_compile_definitions(
     INTERFACE ${ZK_INTERFACE_DEFINES} THREADED
 )
 
-add_executable(cli_mt
-    src/cli.c
-)
-target_link_libraries(cli_mt zookeeper_mt)
-
+if(BUILD_CLIS)
+    add_executable(cli_mt
+        src/cli.c
+    )
+    target_link_libraries(cli_mt zookeeper_mt)
+endif()
 
 
 
