@@ -176,7 +176,11 @@
 #define localtime_r(a,b) localtime_s(b,a)
 #define get_errno() errno=GetLastError()
 #define random rand
-//#define snprintf _snprintf
+
+// https://stackoverflow.com/questions/27754492/vs-2015-compiling-cocos2d-x-3-3-error-fatal-error-c1189-error-macro-definiti
+#if _MSC_VER<1900
+    #define snprintf _snprintf
+#endif
 
 #define ACL ZKACL  // Conflict with windows API
 
