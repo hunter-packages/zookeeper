@@ -195,7 +195,7 @@
      *      http://groups.google.com/group/comp.lang.c/msg/7c7b39328fefab9c
      */
 
-    inline char* strtok_r(
+    static inline char* strtok_r(
         char *str, 
         const char *delim, 
         char **nextp)
