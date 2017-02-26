@@ -1,3 +1,5 @@
+#pragma once
+
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #undef HAVE_ARPA_INET_H
 
@@ -156,14 +158,22 @@
 #define _WIN32_WINNT_NT4 0x0400
 #endif
 
-#define NTDDI_VERSION _WIN32_WINNT_NT4
-#define _WIN32_WINNT _WIN32_WINNT_NT4
+#ifdef _MSC_VER
+    #define NTDDI_VERSION _WIN32_WINNT_NT4
+    #define _WIN32_WINNT _WIN32_WINNT_NT4
+#endif
 
 #define _CRT_SECURE_NO_WARNINGS
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <Winsock2.h>
-#include <winstdint.h>
+
+#ifdef _MSC_VER
+    #include <winstdint.h>
+#else
+    #include <stdint.h>
+#endif
+
 #include <process.h>
 #include <ws2tcpip.h>
 #undef AF_INET6
@@ -172,7 +182,55 @@
 
 #include <errno.h>
 
-#define strtok_r strtok_s
+#ifndef _MSC_VER
+    #include <string.h>
+    /* 
+     * public domain strtok_r() by Charlie Gordon
+     *
+     *   from comp.lang.c  9/14/2007
+     *
+     *      http://groups.google.com/group/comp.lang.c/msg/2ab1ecbb86646684
+     *
+     *     (Declaration that it's public domain):
+     *      http://groups.google.com/group/comp.lang.c/msg/7c7b39328fefab9c
+     */
+
+    inline char* strtok_r(
+        char *str, 
+        const char *delim, 
+        char **nextp)
+    {
+        char *ret;
+
+        if (str == NULL)
+        {
+            str = *nextp;
+        }
+
+        str += strspn(str, delim);
+
+        if (*str == '\0')
+        {
+            return NULL;
+        }
+
+        ret = str;
+
+        str += strcspn(str, delim);
+
+        if (*str)
+        {
+            *str++ = '\0';
+        }
+
+        *nextp = str;
+
+        return ret;
+    }
+#else
+    #define strtok_r strtok_s
+#endif
+
 #define localtime_r(a,b) localtime_s(b,a)
 #define get_errno() errno=GetLastError()
 #define random rand

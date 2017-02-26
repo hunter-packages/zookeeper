@@ -113,7 +113,11 @@ inline int gettimeofday(struct timeval *tp, void *tzp) {
         tp->tv_usec = (now / 10) % 1000000;
         return 0;
 }
-int close(SOCKET fd);
+
+#ifdef _MSC_VER
+    int close(SOCKET fd);
+#endif
+
 int Win32WSAStartup();
 void Win32WSACleanup();
 #endif //WIN32
